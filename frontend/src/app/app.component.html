@@ -1,0 +1,152 @@
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <!-- Logo -->
+    <a class="navbar-brand" routerLink="/">
+      <i class="bi bi-shop"></i>
+      E-Commerce
+    </a>
+
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navigation Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Categories
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" routerLink="/shop">All Products</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" routerLink="/shop" [queryParams]="{category: 'electronics'}">Electronics</a></li>
+            <li><a class="dropdown-item" routerLink="/shop" [queryParams]="{category: 'clothing'}">Clothing</a></li>
+            <li><a class="dropdown-item" routerLink="/shop" [queryParams]="{category: 'books'}">Books</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Search Bar -->
+      <form class="d-flex me-3">
+        <div class="input-group">
+          <input class="form-control" type="search" placeholder="Search products..." #searchInput>
+          <button class="btn btn-outline-light" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- User Actions -->
+      <ul class="navbar-nav">
+        <!-- Cart -->
+        <li class="nav-item">
+          <a class="nav-link position-relative" routerLink="/cart">
+            <i class="bi bi-cart3"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                  *ngIf="(cartItemCount$ | async) as count">
+              {{ count }}
+            </span>
+          </a>
+        </li>
+
+        <!-- User Menu -->
+        <li class="nav-item dropdown" *ngIf="(currentUser$ | async) as user; else loginButton">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle"></i>
+            {{ user.name }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/orders">My Orders</a></li>
+            <li *ngIf="user.role === 'admin'"><hr class="dropdown-divider"></li>
+            <li *ngIf="user.role === 'admin'">
+              <h6 class="dropdown-header">Admin Panel</h6>
+            </li>
+            <li *ngIf="user.role === 'admin'">
+              <a class="dropdown-item" routerLink="/admin/dashboard">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+              </a>
+            </li>
+            <li *ngIf="user.role === 'admin'">
+              <a class="dropdown-item" routerLink="/admin/products">
+                <i class="bi bi-box me-2"></i>Products
+              </a>
+            </li>
+            <li *ngIf="user.role === 'admin'">
+              <a class="dropdown-item" routerLink="/admin/orders">
+                <i class="bi bi-cart-check me-2"></i>Orders
+              </a>
+            </li>
+            <li *ngIf="user.role === 'admin'">
+              <a class="dropdown-item" routerLink="/admin/users">
+                <i class="bi bi-people me-2"></i>Users
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" (click)="logout()">Logout</a></li>
+          </ul>
+        </li>
+
+        <ng-template #loginButton>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login">
+              <i class="bi bi-box-arrow-in-right"></i>
+              Login
+            </a>
+          </li>
+        </ng-template>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow-1">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-4 mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h5>E-Commerce Platform</h5>
+        <p>Your one-stop shop for all your needs.</p>
+      </div>
+      <div class="col-md-2">
+        <h6>Quick Links</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light">About Us</a></li>
+          <li><a href="#" class="text-light">Contact</a></li>
+          <li><a href="#" class="text-light">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2">
+        <h6>Categories</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light">Electronics</a></li>
+          <li><a href="#" class="text-light">Clothing</a></li>
+          <li><a href="#" class="text-light">Books</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6>Customer Service</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light">Shipping Info</a></li>
+          <li><a href="#" class="text-light">Returns</a></li>
+          <li><a href="#" class="text-light">Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="text-center">
+      <p>&copy; 2024 E-Commerce Platform. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

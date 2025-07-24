@@ -1,0 +1,161 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-6 mb-0">User Management</h1>
+      <p class="text-muted">Manage user accounts and permissions</p>
+    </div>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="search" class="form-label">Search Users</label>
+          <input type="text" class="form-control" id="search" 
+                 placeholder="Search by name or email"
+                 [(ngModel)]="searchTerm" (input)="searchUsers()">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="sortBy" class="form-label">Sort By</label>
+          <select class="form-select" id="sortBy" [(ngModel)]="sortBy" (change)="sortUsers()">
+            <option value="name">Name</option>
+            <option value="email">Email</option>
+            <option value="role">Role</option>
+            <option value="createdAt">Join Date</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="sortDirection" class="form-label">Direction</label>
+          <select class="form-select" id="sortDirection" [(ngModel)]="sortDirection" (change)="sortUsers()">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Users ({{ filteredUsers.length }})</h5>
+    </div>
+    <div class="card-body">
+      <!-- Loading Spinner -->
+      <div class="text-center py-4" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="table-responsive" *ngIf="!loading && paginatedUsers.length > 0">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Join Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of paginatedUsers">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-3">
+                    {{ user.name.charAt(0).toUpperCase() }}
+                  </div>
+                  <strong>{{ user.name }}</strong>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="badge" [ngClass]="user.role === 'admin' ? 'bg-danger' : 'bg-primary'">
+                  {{ user.role | titlecase }}
+                </span>
+              </td>
+              <td>{{ user.createdAt | date:'shortDate' }}</td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-outline-warning" 
+                          (click)="toggleUserRole(user)"
+                          [title]="'Make ' + (user.role === 'admin' ? 'User' : 'Admin')">
+                    <i class="bi bi-arrow-up-down"></i>
+                  </button>
+                  <button class="btn btn-outline-danger" 
+                          (click)="deleteUser(user)"
+                          title="Delete User">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="text-center py-5" *ngIf="!loading && paginatedUsers.length === 0">
+        <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+        <h4 class="text-muted mt-3">No users found</h4>
+        <p class="text-muted">{{ searchTerm ? 'Try adjusting your search criteria' : 'No users have registered yet' }}</p>
+      </div>
+
+      <!-- Pagination -->
+      <nav *ngIf="!loading && totalPages > 1" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1">
+              Previous
+            </button>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+              [class.active]="currentPage === i + 1">
+            <button class="page-link" (click)="currentPage = i + 1">{{ i + 1 }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link" (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages">
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- User Statistics -->
+  <div class="row mt-4" *ngIf="!loading">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">User Statistics</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="text-center">
+                <h3 class="text-primary">{{ users.length }}</h3>
+                <small class="text-muted">Total Users</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center">
+                <h3 class="text-danger">{{ getUserCountByRole('admin') }}</h3>
+                <small class="text-muted">Administrators</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center">
+                <h3 class="text-success">{{ getUserCountByRole('user') }}</h3>
+                <small class="text-muted">Regular Users</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,272 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">Checkout</h2>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="d-flex justify-content-center my-5">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+
+      <!-- Checkout Form -->
+      <div *ngIf="!loading && cart" class="row">
+        <div class="col-md-8">
+          <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+            <!-- Contact Information -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Contact Information</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email" 
+                    formControlName="email"
+                    [class.is-invalid]="getFormErrors('email').length > 0">
+                  <div *ngFor="let error of getFormErrors('email')" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Shipping Address</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="firstName" 
+                      formControlName="firstName"
+                      [class.is-invalid]="getFormErrors('firstName').length > 0">
+                    <div *ngFor="let error of getFormErrors('firstName')" class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="lastName" 
+                      formControlName="lastName"
+                      [class.is-invalid]="getFormErrors('lastName').length > 0">
+                    <div *ngFor="let error of getFormErrors('lastName')" class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="street" class="form-label">Street Address</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="street" 
+                    formControlName="street"
+                    [class.is-invalid]="getFormErrors('street').length > 0">
+                  <div *ngFor="let error of getFormErrors('street')" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="city" 
+                      formControlName="city"
+                      [class.is-invalid]="getFormErrors('city').length > 0">
+                    <div *ngFor="let error of getFormErrors('city')" class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="state" 
+                      formControlName="state"
+                      [class.is-invalid]="getFormErrors('state').length > 0">
+                    <div *ngFor="let error of getFormErrors('state')" class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <label for="zipCode" class="form-label">ZIP Code</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="zipCode" 
+                      formControlName="zipCode"
+                      [class.is-invalid]="getFormErrors('zipCode').length > 0">
+                    <div *ngFor="let error of getFormErrors('zipCode')" class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="country" class="form-label">Country</label>
+                  <select class="form-select" id="country" formControlName="country">
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                  </select>
+                </div>
+
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="saveAddress" 
+                    formControlName="saveAddress">
+                  <label class="form-check-label" for="saveAddress">
+                    Save this address for future orders
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Payment Information</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="form-label">Card Details</label>
+                  <div #cardElement class="form-control stripe-card"></div>
+                </div>
+                
+                <div class="security-info">
+                  <small class="text-muted">
+                    <i class="fas fa-lock me-1"></i>
+                    Your payment information is encrypted and secure
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between mb-4">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="goBackToCart()">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Cart
+              </button>
+              
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="checkoutForm.invalid || processing || !clientSecret">
+                <span *ngIf="processing" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                {{ processing ? 'Processing...' : 'Complete Order' }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+              <!-- Order Items -->
+              <div class="order-items">
+                <div class="order-item mb-3" *ngFor="let item of cart.items">
+                  <div class="d-flex align-items-center">
+                    <img 
+                      [src]="item.product?.images?.[0] || 'assets/placeholder.jpg'" 
+                      [alt]="item.product?.name"
+                      class="order-item-image me-3">
+                    
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1">{{ item.product?.name }}</h6>
+                      <small class="text-muted">Qty: {{ item.quantity }}</small>
+                    </div>
+                    
+                    <div class="text-end">
+                      <span class="fw-bold">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr>
+
+              <!-- Price Breakdown -->
+              <div class="price-breakdown">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span>${{ subtotal.toFixed(2) }}</span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Shipping:</span>
+                  <span *ngIf="shipping > 0">${{ shipping.toFixed(2) }}</span>
+                  <span *ngIf="shipping === 0" class="text-success">Free</span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Tax:</span>
+                  <span>${{ tax.toFixed(2) }}</span>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-3">
+                  <strong>Total:</strong>
+                  <strong class="text-primary">${{ total.toFixed(2) }}</strong>
+                </div>
+              </div>
+
+              <!-- Shipping Info -->
+              <div class="shipping-info">
+                <small class="text-muted">
+                  <i class="fas fa-truck me-1"></i>
+                  Estimated delivery: 3-5 business days
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Return Policy -->
+          <div class="card mt-3">
+            <div class="card-body">
+              <h6 class="card-title">Return Policy</h6>
+              <p class="card-text small text-muted">
+                30-day return policy. Items must be in original condition.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

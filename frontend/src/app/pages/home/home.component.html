@@ -1,0 +1,195 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1 class="hero-title">{{ heroTitle }}</h1>
+      <p class="hero-subtitle">{{ heroSubtitle }}</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg me-3" (click)="shopAll()">
+          Shop Now
+        </button>
+        <button class="btn btn-outline-light btn-lg" (click)="browseCategory('electronics')">
+          View Categories
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="section-title">Shop by Category</h2>
+        <p class="section-subtitle">Explore our wide range of product categories</p>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-2 col-md-4 col-sm-6 mb-4" *ngFor="let category of categories">
+        <div class="category-card text-center" (click)="browseCategory(category)">
+          <div class="category-icon">
+            <i class="fas fa-box fa-2x"></i>
+          </div>
+          <h5 class="category-name">{{ category | titlecase }}</h5>
+          <p class="category-link">Explore <i class="fas fa-arrow-right"></i></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="featured-products-section py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Check out our best-selling and most popular items</p>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="d-flex justify-content-center my-5">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!loading" class="row">
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let product of featuredProducts">
+        <div class="product-card h-100">
+          <div class="product-image-container">
+            <img 
+              [src]="product.images[0] || 'assets/placeholder.jpg'" 
+              [alt]="product.name"
+              class="product-image"
+              (click)="viewProduct(product._id)">
+            
+            <div class="product-overlay">
+              <button 
+                class="btn btn-primary btn-sm"
+                [disabled]="product.stock === 0"
+                (click)="addToCart(product)">
+                <i class="fas fa-shopping-cart"></i>
+              </button>
+              <button 
+                class="btn btn-outline-light btn-sm"
+                (click)="viewProduct(product._id)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+
+            <div *ngIf="product.stock === 0" class="out-of-stock-badge">
+              Out of Stock
+            </div>
+          </div>
+          
+          <div class="product-info">
+            <h6 class="product-name" (click)="viewProduct(product._id)">{{ product.name }}</h6>
+            
+            <div class="product-rating mb-2">
+              <span *ngFor="let star of getStarArray(product.rating)" class="text-warning">
+                <i class="fas fa-star" *ngIf="star === 1"></i>
+                <i class="far fa-star" *ngIf="star === 0"></i>
+              </span>
+              <small class="text-muted ms-1">({{ product.reviews.length }})</small>
+            </div>
+            
+            <div class="product-price">
+              <span class="current-price">${{ product.price.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View All Products Button -->
+    <div class="row">
+      <div class="col-12 text-center mt-4">
+        <button class="btn btn-outline-primary btn-lg" (click)="shopAll()">
+          View All Products
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="feature-item text-center">
+          <div class="feature-icon">
+            <i class="fas fa-shipping-fast fa-3x text-primary"></i>
+          </div>
+          <h5 class="feature-title">Free Shipping</h5>
+          <p class="feature-description">Free shipping on orders over $50</p>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="feature-item text-center">
+          <div class="feature-icon">
+            <i class="fas fa-undo fa-3x text-primary"></i>
+          </div>
+          <h5 class="feature-title">Easy Returns</h5>
+          <p class="feature-description">30-day hassle-free returns</p>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="feature-item text-center">
+          <div class="feature-icon">
+            <i class="fas fa-lock fa-3x text-primary"></i>
+          </div>
+          <h5 class="feature-title">Secure Payment</h5>
+          <p class="feature-description">256-bit SSL secure checkout</p>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="feature-item text-center">
+          <div class="feature-icon">
+            <i class="fas fa-headset fa-3x text-primary"></i>
+          </div>
+          <h5 class="feature-title">24/7 Support</h5>
+          <p class="feature-description">Round-the-clock customer support</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section py-5 bg-primary text-white">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <h3 class="newsletter-title">Stay Updated</h3>
+        <p class="newsletter-subtitle">Subscribe to our newsletter for the latest products and exclusive deals</p>
+        
+        <form class="newsletter-form d-flex justify-content-center">
+          <div class="input-group" style="max-width: 400px;">
+            <input 
+              type="email" 
+              class="form-control" 
+              placeholder="Enter your email address"
+              aria-label="Email address">
+            <button class="btn btn-light" type="submit">
+              Subscribe
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

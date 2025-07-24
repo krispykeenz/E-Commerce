@@ -1,0 +1,164 @@
+.empty-cart {
+  padding: 3rem 2rem;
+  
+  i {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.cart-items {
+  .card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    transition: box-shadow 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .product-image {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  .product-name {
+    color: #333;
+    font-weight: 500;
+    
+    &:hover {
+      color: #007bff;
+    }
+  }
+
+  .quantity-controls {
+    .input-group {
+      width: 120px;
+      
+      .form-control {
+        border-left: none;
+        border-right: none;
+      }
+      
+      .btn {
+        border-radius: 0;
+        
+        &:first-child {
+          border-radius: 6px 0 0 6px;
+        }
+        
+        &:last-child {
+          border-radius: 0 6px 6px 0;
+        }
+      }
+    }
+  }
+
+  .item-total {
+    font-size: 1.1rem;
+  }
+}
+
+.cart-actions {
+  padding: 1rem 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 10px 10px 0 0 !important;
+  }
+}
+
+.summary-row {
+  font-size: 0.95rem;
+  
+  &:last-child {
+    font-size: 1.1rem;
+  }
+}
+
+.security-info {
+  background-color: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.text-primary {
+  color: #007bff !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 768px) {
+  .cart-items {
+    .product-image {
+      height: 60px;
+      width: 60px;
+    }
+    
+    .quantity-controls {
+      .input-group {
+        width: 100px;
+      }
+    }
+  }
+  
+  .cart-actions {
+    flex-direction: column;
+    gap: 1rem;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+  
+  .summary-row {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .empty-cart {
+    padding: 2rem 1rem;
+  }
+}

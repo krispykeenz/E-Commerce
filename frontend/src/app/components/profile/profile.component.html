@@ -1,0 +1,248 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Profile Sidebar -->
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="profile-avatar mb-3">
+            <i class="fas fa-user-circle fa-4x text-muted"></i>
+          </div>
+          <h5 class="card-title">{{ currentUser?.name }}</h5>
+          <p class="card-text text-muted">{{ currentUser?.email }}</p>
+        </div>
+        <div class="list-group list-group-flush">
+          <a href="#profile" class="list-group-item list-group-item-action active">
+            <i class="fas fa-user me-2"></i>Profile
+          </a>
+          <a href="#addresses" class="list-group-item list-group-item-action">
+            <i class="fas fa-map-marker-alt me-2"></i>Addresses
+          </a>
+          <a class="list-group-item list-group-item-action" (click)="goToOrders()">
+            <i class="fas fa-shopping-bag me-2"></i>Orders
+          </a>
+          <a class="list-group-item list-group-item-action text-danger" (click)="logout()">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9">
+      <!-- Success/Error Messages -->
+      <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ success }}
+        <button type="button" class="btn-close" (click)="success = ''"></button>
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+
+      <!-- Profile Information -->
+      <div id="profile" class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Profile Information</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="name" 
+                  formControlName="name"
+                  [class.is-invalid]="getFormErrors(profileForm, 'name').length > 0">
+                <div *ngFor="let error of getFormErrors(profileForm, 'name')" class="invalid-feedback">
+                  {{ error }}
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email" 
+                  formControlName="email"
+                  [class.is-invalid]="getFormErrors(profileForm, 'email').length > 0">
+                <div *ngFor="let error of getFormErrors(profileForm, 'email')" class="invalid-feedback">
+                  {{ error }}
+                </div>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="profileForm.invalid || loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              {{ loading ? 'Updating...' : 'Update Profile' }}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Addresses Section -->
+      <div id="addresses" class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Shipping Addresses</h5>
+          <button 
+            class="btn btn-outline-primary btn-sm" 
+            (click)="showAddAddress()"
+            *ngIf="!showAddressForm">
+            <i class="fas fa-plus me-1"></i>Add Address
+          </button>
+        </div>
+        <div class="card-body">
+          <!-- Address Form -->
+          <div *ngIf="showAddressForm" class="address-form mb-4">
+            <h6>{{ editingAddressIndex >= 0 ? 'Edit' : 'Add' }} Address</h6>
+            <form [formGroup]="addressForm" (ngSubmit)="onAddressSubmit()">
+              <div class="row">
+                <div class="col-12 mb-3">
+                  <label for="street" class="form-label">Street Address</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="street" 
+                    formControlName="street"
+                    [class.is-invalid]="getFormErrors(addressForm, 'street').length > 0">
+                  <div *ngFor="let error of getFormErrors(addressForm, 'street')" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="city" class="form-label">City</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="city" 
+                    formControlName="city"
+                    [class.is-invalid]="getFormErrors(addressForm, 'city').length > 0">
+                  <div *ngFor="let error of getFormErrors(addressForm, 'city')" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                  <label for="state" class="form-label">State</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="state" 
+                    formControlName="state"
+                    [class.is-invalid]="getFormErrors(addressForm, 'state').length > 0">
+                  <div *ngFor="let error of getFormErrors(addressForm, 'state')" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                  <label for="zipCode" class="form-label">ZIP Code</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="zipCode" 
+                    formControlName="zipCode"
+                    [class.is-invalid]="getFormErrors(addressForm, 'zipCode').length > 0">
+                  <div *ngFor="let error of getFormErrors(addressForm, 'zipCode')" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="country" class="form-label">Country</label>
+                  <select class="form-select" id="country" formControlName="country">
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                  </select>
+                </div>
+
+                <div class="col-12 mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="isDefault" 
+                      formControlName="isDefault">
+                    <label class="form-check-label" for="isDefault">
+                      Set as default address
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="addressForm.invalid || loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  {{ loading ? 'Saving...' : (editingAddressIndex >= 0 ? 'Update' : 'Add') }} Address
+                </button>
+                
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary"
+                  (click)="cancelAddressForm()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Address List -->
+          <div class="addresses-list">
+            <div *ngIf="!currentUser?.addresses || currentUser?.addresses?.length === 0" class="text-center py-4">
+              <i class="fas fa-map-marker-alt fa-2x text-muted mb-3"></i>
+              <p class="text-muted">No addresses saved yet</p>
+            </div>
+
+            <div 
+              *ngFor="let address of currentUser?.addresses; let i = index" 
+              class="address-item mb-3 p-3 border rounded">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="address-details">
+                  <div class="d-flex align-items-center mb-2">
+                    <strong>Address {{ i + 1 }}</strong>
+                    <span *ngIf="address.isDefault" class="badge bg-primary ms-2">Default</span>
+                  </div>
+                  <p class="mb-1">{{ address.street }}</p>
+                  <p class="mb-1">{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+                  <p class="mb-0 text-muted">{{ address.country }}</p>
+                </div>
+
+                <div class="address-actions">
+                  <div class="btn-group" role="group">
+                    <button 
+                      class="btn btn-outline-primary btn-sm" 
+                      (click)="editAddress(i)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    
+                    <button 
+                      *ngIf="!address.isDefault" 
+                      class="btn btn-outline-success btn-sm" 
+                      (click)="setDefaultAddress(i)"
+                      title="Set as default">
+                      <i class="fas fa-star"></i>
+                    </button>
+                    
+                    <button 
+                      class="btn btn-outline-danger btn-sm" 
+                      (click)="deleteAddress(i)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.navbar-brand i {
+  margin-right: 0.5rem;
+}
+
+.navbar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.position-relative .badge {
+  font-size: 0.7rem;
+}

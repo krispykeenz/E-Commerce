@@ -1,0 +1,203 @@
+<div class="container mt-4">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+    <button class="btn btn-link" (click)="goBack()">Go back to shop</button>
+  </div>
+
+  <!-- Product Details -->
+  <div *ngIf="product && !loading" class="row">
+    <!-- Product Images -->
+    <div class="col-md-6">
+      <div class="product-images">
+        <div class="main-image mb-3">
+          <img 
+            [src]="product.images[selectedImageIndex] || 'assets/placeholder.jpg'" 
+            [alt]="product.name"
+            class="img-fluid rounded">
+        </div>
+        
+        <div class="image-thumbnails" *ngIf="product.images.length > 1">
+          <div class="row">
+            <div class="col-3" *ngFor="let image of product.images; let i = index">
+              <img 
+                [src]="image" 
+                [alt]="product.name"
+                class="img-fluid thumbnail rounded"
+                [class.active]="selectedImageIndex === i"
+                (click)="selectImage(i)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-md-6">
+      <div class="product-info">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a routerLink="/shop">Shop</a></li>
+            <li class="breadcrumb-item"><a routerLink="/shop" [queryParams]="{category: product.category}">{{ product.category }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+          </ol>
+        </nav>
+
+        <h1 class="product-title">{{ product.name }}</h1>
+        
+        <!-- Rating -->
+        <div class="rating mb-3">
+          <span *ngFor="let star of getStarArray(product.rating)" class="text-warning">
+            <i class="fas fa-star" *ngIf="star === 1"></i>
+            <i class="far fa-star" *ngIf="star === 0"></i>
+          </span>
+          <span class="ms-2 text-muted">({{ product.reviews.length }} reviews)</span>
+        </div>
+
+        <p class="product-description">{{ product.description }}</p>
+
+        <div class="price mb-3">
+          <h3 class="text-primary">${{ product.price.toFixed(2) }}</h3>
+        </div>
+
+        <div class="stock-info mb-3">
+          <span *ngIf="product.stock > 0" class="badge bg-success">In Stock ({{ product.stock }} available)</span>
+          <span *ngIf="product.stock === 0" class="badge bg-danger">Out of Stock</span>
+        </div>
+
+        <!-- Quantity and Add to Cart -->
+        <div class="purchase-section" *ngIf="product.stock > 0">
+          <div class="quantity-selector mb-3">
+            <label for="quantity" class="form-label">Quantity:</label>
+            <div class="input-group" style="width: 150px;">
+              <button class="btn btn-outline-secondary" type="button" (click)="decreaseQuantity()">-</button>
+              <input 
+                type="number" 
+                class="form-control text-center" 
+                id="quantity"
+                [value]="quantity"
+                [min]="1"
+                [max]="product.stock"
+                (input)="onQuantityChange($event)">
+              <button class="btn btn-outline-secondary" type="button" (click)="increaseQuantity()">+</button>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg" (click)="addToCart()">
+            <i class="fas fa-shopping-cart me-2"></i>
+            Add to Cart
+          </button>
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-details mt-4">
+          <h5>Product Details</h5>
+          <ul class="list-unstyled">
+            <li><strong>Category:</strong> {{ product.category }}</li>
+            <li><strong>SKU:</strong> {{ product._id }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div *ngIf="product && !loading" class="reviews-section mt-5">
+    <div class="row">
+      <div class="col-12">
+        <h4>Customer Reviews</h4>
+        
+        <!-- Add Review Form -->
+        <div *ngIf="currentUser && canUserReview()" class="add-review mb-4">
+          <h5>Write a Review</h5>
+          
+          <div *ngIf="reviewError" class="alert alert-danger" role="alert">
+            {{ reviewError }}
+          </div>
+
+          <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+            <div class="mb-3">
+              <label class="form-label">Rating</label>
+              <div class="rating-input">
+                <div class="btn-group" role="group">
+                  <input 
+                    *ngFor="let rating of getRatingArray()" 
+                    type="radio" 
+                    class="btn-check" 
+                    [id]="'rating' + rating"
+                    [value]="rating"
+                    formControlName="rating">
+                  <label 
+                    *ngFor="let rating of getRatingArray()" 
+                    class="btn btn-outline-warning" 
+                    [for]="'rating' + rating">
+                    {{ rating }} <i class="fas fa-star"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="comment" class="form-label">Comment</label>
+              <textarea 
+                class="form-control" 
+                id="comment" 
+                rows="4"
+                formControlName="comment"
+                placeholder="Share your thoughts about this product..."></textarea>
+              <div *ngIf="reviewForm.get('comment')?.invalid && reviewForm.get('comment')?.touched" class="text-danger">
+                Comment must be at least 10 characters long.
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="reviewForm.invalid || submittingReview">
+              <span *ngIf="submittingReview" class="spinner-border spinner-border-sm me-2"></span>
+              {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+            </button>
+          </form>
+        </div>
+
+        <div *ngIf="!currentUser" class="alert alert-info">
+          <a routerLink="/login">Login</a> to write a review.
+        </div>
+
+        <div *ngIf="currentUser && !canUserReview()" class="alert alert-warning">
+          You have already reviewed this product.
+        </div>
+
+        <!-- Reviews List -->
+        <div class="reviews-list">
+          <div *ngIf="product.reviews.length === 0" class="text-muted">
+            No reviews yet. Be the first to review this product!
+          </div>
+
+          <div *ngFor="let review of product.reviews" class="review-item mb-3 p-3 border rounded">
+            <div class="review-header d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <strong>{{ review.userName }}</strong>
+                <div class="rating">
+                  <span *ngFor="let star of getStarArray(review.rating)" class="text-warning">
+                    <i class="fas fa-star" *ngIf="star === 1"></i>
+                    <i class="far fa-star" *ngIf="star === 0"></i>
+                  </span>
+                </div>
+              </div>
+              <small class="text-muted">{{ review.createdAt | date:'medium' }}</small>
+            </div>
+            <p class="review-comment mb-0">{{ review.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,195 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="display-6 mb-0">Product Management</h1>
+          <p class="text-muted">Manage your product catalog</p>
+        </div>
+        <button class="btn btn-primary" (click)="addProduct()">
+          <i class="bi bi-plus-circle me-2"></i>Add Product
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Form Modal -->
+  <div class="card mb-4" *ngIf="showProductForm">
+    <div class="card-header">
+      <h5 class="mb-0">{{ editingProduct ? 'Edit' : 'Add' }} Product</h5>
+    </div>
+    <div class="card-body">
+      <form #productFormRef="ngForm" (ngSubmit)="saveProduct()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="productName" class="form-label">Product Name *</label>
+            <input type="text" class="form-control" id="productName" 
+                   [(ngModel)]="productForm.name" name="name" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="productCategory" class="form-label">Category *</label>
+            <input type="text" class="form-control" id="productCategory" 
+                   [(ngModel)]="productForm.category" name="category" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="productPrice" class="form-label">Price *</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" id="productPrice" 
+                     [(ngModel)]="productForm.price" name="price" required min="0" step="0.01">
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="productStock" class="form-label">Stock Quantity *</label>
+            <input type="number" class="form-control" id="productStock" 
+                   [(ngModel)]="productForm.stock" name="stock" required min="0">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="productDescription" class="form-label">Description</label>
+          <textarea class="form-control" id="productDescription" rows="3"
+                    [(ngModel)]="productForm.description" name="description"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="productImage" class="form-label">Product Image</label>
+          <input type="file" class="form-control" id="productImage" 
+                 (change)="onFileSelected($event)" accept="image/*">
+          <div class="form-text">Upload a product image (placeholder functionality)</div>
+          <img *ngIf="productForm.images && productForm.images.length > 0" [src]="productForm.images[0]" 
+               alt="Product preview" class="mt-2" style="max-width: 200px; max-height: 200px;">
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="!productFormRef.form.valid">
+            <i class="bi bi-check-circle me-2"></i>{{ editingProduct ? 'Update' : 'Add' }} Product
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+            <i class="bi bi-x-circle me-2"></i>Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="search" class="form-label">Search Products</label>
+          <input type="text" class="form-control" id="search" placeholder="Search by name or category"
+                 [(ngModel)]="searchTerm" (input)="searchProducts()">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="sortBy" class="form-label">Sort By</label>
+          <select class="form-select" id="sortBy" [(ngModel)]="sortBy" (change)="sortProducts()">
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+            <option value="category">Category</option>
+            <option value="stock">Stock</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="sortDirection" class="form-label">Direction</label>
+          <select class="form-select" id="sortDirection" [(ngModel)]="sortDirection" (change)="sortProducts()">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Products ({{ filteredProducts.length }})</h5>
+    </div>
+    <div class="card-body">
+      <!-- Loading Spinner -->
+      <div class="text-center py-4" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Products Table -->
+      <div class="table-responsive" *ngIf="!loading && paginatedProducts.length > 0">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of paginatedProducts">
+              <td>
+                <img [src]="(product.images && product.images.length > 0) ? product.images[0] : 'https://via.placeholder.com/80x80'" 
+                     [alt]="product.name" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+              </td>
+              <td>
+                <div class="fw-bold">{{ product.name }}</div>
+                <small class="text-muted">{{ product.description | slice:0:50 }}{{ product.description && product.description.length > 50 ? '...' : '' }}</small>
+              </td>
+              <td>
+                <span class="badge bg-secondary">{{ product.category }}</span>
+              </td>
+              <td>${{ product.price | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge" [ngClass]="product.stock > 10 ? 'bg-success' : product.stock > 0 ? 'bg-warning' : 'bg-danger'">
+                  {{ product.stock }} in stock
+                </span>
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-outline-primary" (click)="editProduct(product)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-outline-danger" (click)="deleteProduct(product)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="text-center py-5" *ngIf="!loading && paginatedProducts.length === 0">
+        <i class="bi bi-box text-muted" style="font-size: 4rem;"></i>
+        <h4 class="text-muted mt-3">No products found</h4>
+        <p class="text-muted">{{ searchTerm ? 'Try adjusting your search criteria' : 'Start by adding your first product' }}</p>
+        <button class="btn btn-primary" (click)="addProduct()" *ngIf="!searchTerm">
+          <i class="bi bi-plus-circle me-2"></i>Add Product
+        </button>
+      </div>
+
+      <!-- Pagination -->
+      <nav *ngIf="!loading && totalPages > 1" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1">
+              Previous
+            </button>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+              [class.active]="currentPage === i + 1">
+            <button class="page-link" (click)="currentPage = i + 1">{{ i + 1 }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link" (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages">
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
