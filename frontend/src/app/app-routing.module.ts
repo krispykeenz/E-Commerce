@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { environment } from '../environments/environment';
 
 // Pages
 import { HomeComponent } from './pages/home/home.component';
@@ -57,8 +58,8 @@ const routes: Routes = [
     enableTracing: false,
     // Scroll to top on route change
     scrollPositionRestoration: 'top',
-    // Use hash routing if needed for deployment
-    useHash: false
+    // GitHub Pages is static hosting; hash routing prevents 404s on deep links.
+    useHash: environment.demoMode
   })],
   exports: [RouterModule]
 })

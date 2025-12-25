@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   // Hero section data
   heroTitle = 'Welcome to Our E-Commerce Store';
   heroSubtitle = 'Discover amazing products at unbeatable prices';
-  heroImage = 'assets/hero-banner.jpg';
+  heroImage = 'assets/hero-banner.svg';
 
   constructor(
     private productService: ProductService,

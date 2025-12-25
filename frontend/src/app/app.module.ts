@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { DemoInterceptor } from './interceptors/demo.interceptor';
 
 // Pages
 import { HomeComponent } from './pages/home/home.component';
@@ -55,6 +56,11 @@ import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
     NgbModule
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: DemoInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

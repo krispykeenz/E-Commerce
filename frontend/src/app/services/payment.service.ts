@@ -24,10 +24,16 @@ export class PaymentService {
   private elements: StripeElements | null = null;
 
   constructor(private http: HttpClient) {
-    this.initializeStripe();
+    if (!environment.demoMode) {
+      this.initializeStripe();
+    }
   }
 
   private async initializeStripe(): Promise<void> {
+    if (environment.demoMode) {
+      return;
+    }
+
     try {
       this.stripe = await loadStripe(environment.stripePublishableKey);
     } catch (error) {
@@ -36,15 +42,34 @@ export class PaymentService {
   }
 
   async createElements(): Promise<StripeElements | null> {
+    if (environment.demoMode) {
+      const fakeCard: any = {
+        mount: () => {},
+        on: (_event: string, cb: any) => {
+          // Immediately mark the card as "complete" so the form can proceed.
+          if (_event === 'change') {
+            cb({ complete: true });
+          }
+        }
+      };
+
+      const fakeElements: any = {
+        create: () => fakeCard
+      };
+
+      this.elements = fakeElements as StripeElements;
+      return this.elements;
+    }
+
     if (!this.stripe) {
       await this.initializeStripe();
     }
-    
+
     if (this.stripe) {
       this.elements = this.stripe.elements();
       return this.elements;
     }
-    
+
     return null;
   }
 
@@ -73,6 +98,10 @@ export class PaymentService {
       };
     }
   ): Promise<PaymentResult> {
+    if (environment.demoMode) {
+      return { success: true, paymentIntentId: `pi_demo_${Date.now()}` };
+    }
+
     if (!this.stripe) {
       return { success: false, error: 'Stripe not initialized' };
     }

@@ -19,12 +19,37 @@ export class AuthService {
 
   private loadCurrentUser(): void {
     const token = this.getToken();
+
     if (token) {
       // Decode token to get user info or make API call to verify
       const userData = this.decodeToken(token);
       if (userData) {
         this.currentUserSubject.next(userData);
       }
+      return;
+    }
+
+    if (environment.demoMode) {
+      const demoUser: User = {
+        _id: 'u_demo_1',
+        name: 'Demo User',
+        email: 'demo@shop.local',
+        role: 'user',
+        addresses: [
+          {
+            street: '123 Demo Street',
+            city: 'San Francisco',
+            state: 'CA',
+            zipCode: '94103',
+            country: 'United States',
+            isDefault: true
+          }
+        ]
+      };
+
+      const demoToken = this.createDemoToken(demoUser);
+      this.setToken(demoToken);
+      this.currentUserSubject.next(demoUser);
     }
   }
 
@@ -101,6 +126,19 @@ export class AuthService {
     } catch (error) {
       return true;
     }
+  }
+
+  private createDemoToken(user: User): string {
+    // This is NOT a real signed JWT. It only exists to satisfy client-side token parsing.
+    const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }));
+    const payload = btoa(
+      JSON.stringify({
+        user,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 // 1 year
+      })
+    );
+
+    return `${header}.${payload}.demo`;
   }
 
   private handleError(error: any): Observable<never> {
