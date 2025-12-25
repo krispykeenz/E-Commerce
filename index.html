@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Commerce Platform — Demo Mode</title>
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div>
+          <div class="kicker">DEMO MODE (static showcase)</div>
+          <h1>E-Commerce Platform</h1>
+          <p class="subtitle">
+            This is a safe-to-publish static demo. All data is mocked and no payments/auth are real.
+          </p>
+        </div>
+        <div class="header-actions">
+          <a class="btn" href="https://github.com/krispykeenz/E-Commerce" target="_blank" rel="noopener">View repo</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>What this project demonstrates</h2>
+        <ul class="bullets">
+          <li>Product catalog UI patterns (filtering, cards)</li>
+          <li>Cart state management (add/remove/quantity)</li>
+          <li>Checkout flow UX (simulated)</li>
+        </ul>
+        <p class="muted">
+          Note: In the real project, checkout integrates Stripe and the backend persists orders. In this demo,
+          everything runs in-memory.
+        </p>
+      </section>
+
+      <section class="grid-2">
+        <section class="card">
+          <div class="row">
+            <h2 class="m0">Demo shop</h2>
+            <div class="row gap-sm">
+              <label class="field">
+                <span class="label">Category</span>
+                <select id="categorySelect"></select>
+              </label>
+              <label class="field">
+                <span class="label">Search</span>
+                <input id="searchInput" type="search" placeholder="Search products…" />
+              </label>
+            </div>
+          </div>
+
+          <div id="productGrid" class="product-grid" aria-live="polite"></div>
+        </section>
+
+        <aside class="card">
+          <div class="row">
+            <h2 class="m0">Cart</h2>
+            <div class="pill" id="cartCount">0 items</div>
+          </div>
+
+          <div id="cartList" class="cart-list"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div>
+              <div class="muted">Total</div>
+              <div class="total" id="cartTotal">$0.00</div>
+            </div>
+            <button class="btn btn-primary" id="checkoutBtn" type="button">Simulate checkout</button>
+          </div>
+
+          <p class="muted small">
+            Checkout is simulated. No Stripe keys or backend services are used in this demo.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <span class="muted">E-Commerce Platform — Demo Mode</span>
+        <span class="muted">Built as a portfolio showcase</span>
+      </div>
+    </footer>
+
+    <!-- DEMO MODE ONLY: safe, static showcase. Remove the /demo folder when publishing a real deployment. -->
+    <script src="./app.js"></script>
+  </body>
+</html>
