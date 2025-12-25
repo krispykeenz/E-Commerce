@@ -66,8 +66,8 @@
                     <small class="text-muted">Quantity: {{ item.quantity }}</small>
                   </div>
                   <div class="text-end">
-                    <div>${{ item.price.toFixed(2) }} each</div>
-                    <strong>${{ item.totalPrice.toFixed(2) }}</strong>
+                    <div>{{ item.price | zarCurrency }} each</div>
+                    <strong>{{ item.totalPrice | zarCurrency }}</strong>
                   </div>
                 </div>
               </div>
@@ -76,7 +76,7 @@
             <div class="order-total mt-3 pt-3 border-top">
               <div class="d-flex justify-content-between">
                 <strong>Total Amount:</strong>
-                <strong class="text-primary">${{ selectedOrder.totalAmount.toFixed(2) }}</strong>
+                <strong class="text-primary">{{ selectedOrder.totalAmount | zarCurrency }}</strong>
               </div>
             </div>
           </div>
@@ -173,7 +173,7 @@
                 
                 <div class="col-md-2">
                   <small class="text-muted">Total</small>
-                  <div class="order-total">${{ order.totalAmount.toFixed(2) }}</div>
+                  <div class="order-total">{{ order.totalAmount | zarCurrency }}</div>
                 </div>
                 
                 <div class="col-md-2 text-end">

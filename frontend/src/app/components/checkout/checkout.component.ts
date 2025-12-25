@@ -142,7 +142,7 @@ export class CheckoutComponent implements OnInit {
     
     this.subtotal = this.cart.totalPrice;
     this.tax = this.subtotal * 0.08; // 8% tax
-    this.shipping = this.subtotal > 50 ? 0 : 5.99; // Free shipping over $50
+    this.shipping = this.subtotal > 50 ? 0 : 5.99; // Free shipping over R50
     this.total = this.subtotal + this.tax + this.shipping;
   }
 

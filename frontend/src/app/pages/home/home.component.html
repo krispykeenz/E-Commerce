@@ -104,7 +104,7 @@
             </div>
             
             <div class="product-price">
-              <span class="current-price">${{ product.price.toFixed(2) }}</span>
+              <span class="current-price">{{ product.price | zarCurrency }}</span>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@
             <i class="fas fa-shipping-fast fa-3x text-primary"></i>
           </div>
           <h5 class="feature-title">Free Shipping</h5>
-          <p class="feature-description">Free shipping on orders over $50</p>
+          <p class="feature-description">Free shipping on orders over R50</p>
         </div>
       </div>
       

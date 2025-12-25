@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { DemoInterceptor } from './interceptors/demo.interceptor';
+import { ZarCurrencyPipe } from './pipes/zar-currency.pipe';
 
 // Pages
 import { HomeComponent } from './pages/home/home.component';
@@ -45,7 +46,8 @@ import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
     AdminDashboardComponent,
     AdminProductsComponent,
     AdminOrdersComponent,
-    AdminUsersComponent
+    AdminUsersComponent,
+    ZarCurrencyPipe
   ],
   imports: [
     BrowserModule,
